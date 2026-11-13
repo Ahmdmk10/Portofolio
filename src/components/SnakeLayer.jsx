@@ -18,7 +18,7 @@ export default function SnakeLayer() {
     let len = BASE_LEN, headX = -20, prevT = performance.now()
 
     const resize = () => {
-      dpr = Math.min(window.devicePixelRatio || 1, 2)
+      dpr = Math.min(window.devicePixelRatio || 1, 1.5)
       w = window.innerWidth; h = window.innerHeight
       canvas.width = w * dpr; canvas.height = h * dpr
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)

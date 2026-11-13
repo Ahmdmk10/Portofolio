@@ -4,7 +4,7 @@ import { ArrowUpRight, ChevronLeft, ChevronRight } from 'lucide-react'
 import { Pill } from './Ui.jsx'
 
 const EASE = [0.2, 0.9, 0.2, 1]
-const itemV = { hidden: { opacity: 0, y: 28 }, show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: EASE } } }
+const itemV = { hidden: { opacity: 0, y: 28 }, show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: EASE } } }
 const Stagger = ({ children, className }) => (
   <motion.div className={className} initial="hidden" whileInView="show" viewport={{ once: true, margin: '-60px' }} variants={{ hidden: {}, show: { transition: { staggerChildren: 0.08 } } }}>{children}</motion.div>
 )
@@ -60,7 +60,7 @@ export function Teasers() {
     <Row id="crafts" n="01" label="Crafts" title="Three crafts. One mind.">
       <Stagger className="grid md:grid-cols-3 gap-[10px]">
         {items.map(([href, n, t, d]) => (
-          <motion.a key={t} href={href} variants={itemV} whileHover={{ y: -6 }} className="group relative overflow-hidden rounded-[5px] border border-white/10 bg-white/[0.03] backdrop-blur-sm p-5 min-h-[220px] flex flex-col hover:border-emerald-400/50 transition-colors">
+          <motion.a key={t} href={href} variants={itemV} whileHover={{ y: -6 }} className="group relative overflow-hidden rounded-[5px] border border-white/10 bg-white/[0.05] p-5 min-h-[220px] flex flex-col hover:border-emerald-400/50 transition-colors">
             <span className="font-mono text-[11px] text-white/40">{n}</span>
             <span className="absolute top-4 right-4 grid size-8 place-items-center rounded-full border border-white/15 group-hover:bg-emerald-400 group-hover:text-black group-hover:rotate-45 transition-all"><ArrowUpRight size={14} /></span>
             <h3 className="mt-auto text-6xl">{t}</h3>
@@ -104,7 +104,7 @@ export function Features() {
     <Row id="skills" n="03" label="Skills" title="Skills with receipts.">
       <Stagger className="grid sm:grid-cols-2 xl:grid-cols-4 gap-[10px]">
         {FEATURES.map(([t, d], i) => (
-          <motion.div key={t} variants={itemV} whileHover={{ y: -6 }} className="group rounded-[5px] border border-white/10 bg-white/[0.03] backdrop-blur-sm p-4 min-h-[170px] flex flex-col hover:border-emerald-400/50 transition-colors">
+          <motion.div key={t} variants={itemV} whileHover={{ y: -6 }} className="group rounded-[5px] border border-white/10 bg-white/[0.05] p-4 min-h-[170px] flex flex-col hover:border-emerald-400/50 transition-colors">
             <span className="font-mono text-[11px] text-emerald-400">{String(i + 1).padStart(2, '0')}</span>
             <h4 className="mt-auto text-3xl group-hover:text-emerald-300 transition-colors">{t}</h4>
             <p className="mt-1 text-xs text-white/50 leading-relaxed">{d}</p>
@@ -128,7 +128,7 @@ const SERVICES = [
   ['04', 'Consulting', 'Strategy and direction for ambitious teams.'],
 ]
 
-const SPRING = { stiffness: 220, damping: 22, mass: 0.6 }
+const SPRING = { stiffness: 170, damping: 24, mass: 0.7 } // critically damped-ish: no wobble, no lag
 
 // One card: outer layer handles carousel position, inner layer tilts toward the cursor with a moving glare.
 function SelectCard({ num, title, off, active, onSelect, px, py }) {
@@ -139,16 +139,16 @@ function SelectCard({ num, title, off, active, onSelect, px, py }) {
   const glare = useMotionTemplate`radial-gradient(circle at ${gx}% ${gy}%, rgba(255,255,255,.28), transparent 55%)`
   // letter drifts opposite to the cursor, further than the card: a cheap depth illusion
   const lx = useSpring(useTransform(tx, [-0.5, 0.5], [18, -18]), SPRING), ly = useSpring(useTransform(ty, [-0.5, 0.5], [18, -18]), SPRING)
-  const move = (e) => { const r = e.currentTarget.getBoundingClientRect(); tx.set((e.clientX - r.left) / r.width - 0.5); ty.set((e.clientY - r.top) / r.height - 0.5) }
+  const move = (e) => { if (!active) return; const r = e.currentTarget.getBoundingClientRect(); tx.set((e.clientX - r.left) / r.width - 0.5); ty.set((e.clientY - r.top) / r.height - 0.5) }
   const leave = () => { tx.set(0); ty.set(0) }
   // the whole row leans toward the pointer; side cards also slide slightly toward it
   const shift = useTransform(px, [-0.5, 0.5], [-14 * (1 + Math.abs(off)), 14 * (1 + Math.abs(off))])
   return (
-    <motion.div className="absolute left-1/2 top-0 w-[200px] sm:w-[250px] h-[340px] sm:h-[400px]" style={{ marginLeft: -125, transformStyle: 'preserve-3d', zIndex: 10 - Math.abs(off) }}
+    <motion.div className="absolute left-1/2 top-0 w-[200px] sm:w-[250px] h-[340px] sm:h-[400px]" style={{ marginLeft: -125, transformStyle: 'preserve-3d', zIndex: 10 - Math.abs(off), willChange: 'transform' }}
       animate={{ x: off * 150, z: active ? 120 : -Math.abs(off) * 90, rotateY: off * -38, scale: active ? 1 : 0.88, opacity: Math.abs(off) > 1.5 ? 0.35 : 1 }}
-      transition={{ type: 'spring', stiffness: 140, damping: 20 }}>
+      transition={{ type: 'spring', stiffness: 120, damping: 22, mass: 0.9 }}>
       <motion.button type="button" onClick={onSelect} aria-pressed={active} onPointerMove={move} onPointerLeave={leave}
-        whileHover={{ scale: active ? 1.04 : 1.1 }} whileTap={{ scale: 0.96 }}
+        whileHover={{ scale: active ? 1.03 : 1.06 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 300, damping: 24 }}
         className={`relative size-full rounded-[8px] border p-4 flex flex-col text-left cursor-pointer overflow-hidden ${active ? 'border-emerald-400 bg-[#0c1a16] shadow-[0_0_50px_rgba(52,245,164,.25)]' : 'border-white/15 bg-[#0a0d0e] hover:border-emerald-400/60'}`}
         style={{ rotateX: rx, rotateY: ry, x: shift, transformStyle: 'preserve-3d' }}>
         <span className="font-mono text-[11px] text-emerald-400">{num}</span>
@@ -239,7 +239,7 @@ export function Cta() {
           <h4 className="mt-auto text-6xl flex items-center gap-3">Browse the work <ArrowUpRight className="transition-transform group-hover:rotate-45" size={36} /></h4>
           <p className="mt-2 text-sm opacity-70">Proyek coding, karya design, dan catatan belajar.</p>
         </motion.a>
-        <motion.a href="#contact" onClick={toContact} variants={itemV} whileHover={{ y: -6 }} className="group rounded-[5px] border border-white/15 bg-white/[0.03] backdrop-blur-sm p-6 min-h-[240px] flex flex-col hover:border-emerald-400/60 transition-colors">
+        <motion.a href="#contact" onClick={toContact} variants={itemV} whileHover={{ y: -6 }} className="group rounded-[5px] border border-white/15 bg-white/[0.05] p-6 min-h-[240px] flex flex-col hover:border-emerald-400/60 transition-colors">
           <span className="font-mono text-[11px] text-white/50">Contact</span>
           <h4 className="mt-auto text-6xl flex items-center gap-3 text-emerald-300">Say hello <ArrowUpRight className="transition-transform group-hover:rotate-45" size={36} /></h4>
           <p className="mt-2 text-sm text-white/55">Terbuka untuk kolaborasi, magang, dan CTF bareng.</p>

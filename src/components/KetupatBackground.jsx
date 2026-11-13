@@ -27,7 +27,7 @@ export default function KetupatBackground() {
     let velocity = 0
 
     const resize = () => {
-      dpr = Math.min(window.devicePixelRatio || 1, 2)
+      dpr = Math.min(window.devicePixelRatio || 1, 1.5)
       w = window.innerWidth
       h = window.innerHeight
       canvas.width = w * dpr
@@ -87,25 +87,31 @@ export default function KetupatBackground() {
       ctx.fillStyle = 'rgba(255,255,255,0.22)'
       ctx.fillText(`A=${A.toFixed(0)}  b=${b.toFixed(4)}  c=${(c % (Math.PI * 2)).toFixed(2)}  d=${d.toFixed(0)}`, 24, h - 36)
 
-      // ketupat grid
+      // ketupat grid. Far dots share ONE path/fill; only dots near the curve are drawn individually,
+      // with a larger translucent diamond as glow (canvas shadowBlur per dot was the main cost).
+      ctx.fillStyle = 'rgba(255,255,255,0.1)'
+      ctx.beginPath()
+      const near = []
       for (let gx = SPACING / 2; gx < w; gx += SPACING) {
         const sy = snake(gx)
         for (let gy = SPACING / 2; gy < h; gy += SPACING) {
           const dist = Math.abs(gy - sy)
           if (dist > band) {
-            ctx.fillStyle = 'rgba(255,255,255,0.1)'
-            diamond(gx, gy, 1.3)
-            continue
-          }
-          const k = 1 - dist / band
-          const [r, g, bl] = gradient(gx / w * 0.8 + t * 0.08 + (gy - sy) / 600)
-          ctx.shadowColor = `rgb(${r | 0},${g | 0},${bl | 0})`
-          ctx.shadowBlur = 10 * k
-          ctx.fillStyle = `rgba(${r | 0},${g | 0},${bl | 0},${0.25 + 0.75 * k})`
-          diamond(gx, gy, 1.3 + 2.4 * k * k)
+            const r = 1.3
+            ctx.moveTo(gx, gy - r); ctx.lineTo(gx + r, gy); ctx.lineTo(gx, gy + r); ctx.lineTo(gx - r, gy); ctx.closePath()
+          } else near.push(gx, gy, sy)
         }
       }
-      ctx.shadowBlur = 0
+      ctx.fill()
+      for (let i = 0; i < near.length; i += 3) {
+        const gx = near[i], gy = near[i + 1], sy = near[i + 2]
+        const k = 1 - Math.abs(gy - sy) / band
+        const [r, g, bl] = gradient(gx / w * 0.8 + t * 0.08 + (gy - sy) / 600)
+        const rgb = `${r | 0},${g | 0},${bl | 0}`
+        if (k > 0.35) { ctx.fillStyle = `rgba(${rgb},${0.14 * k})`; diamond(gx, gy, 3 + 6 * k * k) }
+        ctx.fillStyle = `rgba(${rgb},${0.25 + 0.75 * k})`
+        diamond(gx, gy, 1.3 + 2.4 * k * k)
+      }
       raf = requestAnimationFrame(draw)
     }
     raf = requestAnimationFrame(draw)
