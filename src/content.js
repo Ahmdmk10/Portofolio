@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react'
 const REPO = import.meta.env.VITE_GITHUB_REPO || ''
 const BRANCH = import.meta.env.VITE_GITHUB_BRANCH || 'main'
 const RAW = REPO ? `https://raw.githubusercontent.com/${REPO}/${BRANCH}/public/content` : ''
-const LOCAL = '/content'
+const LOCAL = `${import.meta.env.BASE_URL}content`
 const cache = {}
 
 async function fromGitHub(name) {

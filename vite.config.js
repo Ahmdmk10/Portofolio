@@ -13,11 +13,14 @@ const adminSlash = {
   },
 }
 
-export default defineConfig({
+// GitHub Pages serves a project site at /<repo-name>/, so built asset URLs must start with that prefix.
+// Override with VITE_BASE (e.g. '/' for a custom domain or user.github.io repo).
+export default defineConfig(({ command }) => ({
+  base: command === 'build' ? (process.env.VITE_BASE || '/Portofolio/') : '/',
   plugins: [react(), tailwindcss(), adminSlash],
   build: {
     rollupOptions: {
       input: { main: resolve(__dirname, 'index.html'), admin: resolve(__dirname, 'admin/index.html') },
     },
   },
-})
+}))

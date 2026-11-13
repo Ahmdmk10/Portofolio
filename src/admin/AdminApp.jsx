@@ -76,7 +76,7 @@ export default function AdminApp() {
           <p className="font-mono text-[11px] text-white/40">{user.login} · {REPO}</p>
         </div>
         <div className="flex items-center gap-4 text-sm">
-          <a href="/" target="_blank" rel="noreferrer" className="flex items-center gap-1 text-white/60 hover:text-white">Lihat situs <ExternalLink size={13} /></a>
+          <a href={import.meta.env.BASE_URL} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-white/60 hover:text-white">Lihat situs <ExternalLink size={13} /></a>
           <button onClick={signOut} className="flex items-center gap-1 text-white/60 hover:text-white"><LogOut size={14} />Keluar</button>
         </div>
       </header>
