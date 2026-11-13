@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "domas", "status": "published", "title": "DoMas (Dompet Mahasiswa)", "year": "2026", "kind": "CLI System",
+      "tags": ["C++", "Pascal", "OOP", "File I/O"],
+      "desc": "Aplikasi keuangan mahasiswa berbasis terminal. Mencatat pemasukan dan pengeluaran, disimpan lewat file I/O, dan disusun dengan konsep OOP.",
+      "link": "", "cover": null
+    },
+    {
+      "id": "meac", "status": "published", "title": "M.E.A.C. Access Control", "year": "2026", "kind": "Security Simulator",
+      "tags": ["Pascal", "Security", "Matrix"],
+      "desc": "Simulator access control berbasis matriks: subjek, objek, dan hak akses, ditulis dengan Pascal.",
+      "link": "", "cover": null
+    },
+    {
+      "id": "ctf", "status": "published", "title": "COMPFEST CTF Writeups", "year": "2026", "kind": "Documentation",
+      "tags": ["CTF", "Crypto", "Web Exploit"],
+      "desc": "Dokumentasi penjelajahan siber: crypto, web exploitation, dan catatan cara berpikir di tiap tantangan.",
+      "link": "", "cover": null
+    },
+    {
+      "id": "portfolio", "status": "published", "title": "This Portfolio", "year": "2026", "kind": "Web",
+      "tags": ["React", "Tailwind", "Canvas", "Physics"],
+      "desc": "Background ketupat y = A sin(bx + c) + d, tali verlet bersendi, dan multi-tab.",
+      "link": "", "cover": null
+    }
+  ]
+}

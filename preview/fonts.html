@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="id"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="robots" content="noindex" />
+<title>Font Nama dan Email</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@1,900&family=Unbounded:wght@800&family=Gloock&family=Bagel+Fat+One&family=Rubik+Glitch&family=Monoton&family=Chivo+Mono:wght@400&display=swap" rel="stylesheet" />
+<style>
+ *{box-sizing:border-box;margin:0} body{background:#05080a;color:#e8f1ee;padding:24px 16px 80px;font-family:"Chivo Mono",monospace}
+ body::before{content:"";position:fixed;inset:0;z-index:-1;background-image:radial-gradient(rgba(255,255,255,.1) 1px,transparent 1px);background-size:24px 24px}
+ .grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,560px),1fr));max-width:1500px;margin:0 auto}
+ .card{border:1px solid #ffffff1a;border-radius:10px;padding:22px;background:#0b0f0eaa}
+ .tag{font-size:11px;color:#ffffff80;margin-bottom:14px}.tag b{color:#34f5a4;font-weight:400}
+ .name{font-size:clamp(34px,5vw,64px);line-height:1.05;background:linear-gradient(135deg,#fff,#fff 40%,#34f5a4);-webkit-background-clip:text;background-clip:text;color:transparent}
+ .mail{margin-top:16px;font-size:clamp(22px,3vw,38px);color:#34f5a4;word-break:break-all}
+</style></head><body>
+<div class="grid" id="g"></div>
+<script>
+const F=[['A','Fraunces Italic Black (dipakai sekarang)',"'Fraunces'",900,'italic','Editorial, lembut-kontras, kesan majalah. Cocok dengan serif Instrument di sub-teks.'],
+['B','Unbounded ExtraBold',"'Unbounded'",800,'normal','Lebar, bulat, futuristik. Kesan startup kreatif.'],
+['C','Gloock',"'Gloock'",400,'normal','Serif display tegas dengan kontras tinggi, kesan klasik-mewah.'],
+['D','Bagel Fat One',"'Bagel Fat One'",400,'normal','Gemuk dan playful. Paling santai.'],
+['E','Rubik Glitch',"'Rubik Glitch'",400,'normal','Efek glitch, nyambung ke tema cyber. Paling berani, kurang halus.'],
+['F','Monoton',"'Monoton'",400,'normal','Garis neon retro. Paling mencolok, tapi sulit dibaca untuk nama panjang.']]
+document.getElementById('g').innerHTML=F.map(([i,t,f,w,s,why])=>`<section class="card"><div class="tag"><b>${i}</b> ${t}</div>
+<div class="name" style="font-family:${f};font-weight:${w};font-style:${s}">AHMAD MUMTAZUL KAUTSAR</div>
+<div class="mail" style="font-family:${f};font-weight:${w};font-style:${s}">mumchakys@gmail.com</div>
+<div class="tag" style="margin-top:14px;font-family:'Chivo Mono'">${why}</div></section>`).join('')
+</script></body></html>

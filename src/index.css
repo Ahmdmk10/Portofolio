@@ -1,0 +1,41 @@
+@import "tailwindcss";
+
+@theme {
+  --default-transition-duration: 280ms;
+  --default-transition-timing-function: cubic-bezier(.2, .9, .2, 1);
+  --font-sans: "Chivo Mono", ui-monospace, monospace;
+  --font-mono: "Chivo Mono", ui-monospace, monospace;
+  --font-display: "Big Shoulders Display", "Arial Narrow", sans-serif;
+  --font-sticker: "Bricolage Grotesque", "Arial Black", sans-serif;
+  --font-serif: "Instrument Serif", Georgia, serif;
+  --font-name: "Fraunces", Georgia, serif;
+  --color-ink: #05080a;
+  --color-cyber: #34f5a4;
+}
+
+html { scroll-behavior: smooth; }
+body { background: var(--color-ink); color: #e8f1ee; font-family: var(--font-sans); overflow-x: hidden; }
+::selection { background: #34f5a4; color: #05080a; }
+
+@keyframes float-y { 0%, 100% { translate: 0 0; } 50% { translate: 0 -14px; } }
+@keyframes spin-cube { from { transform: rotateX(-25deg) rotateY(0deg); } to { transform: rotateX(-25deg) rotateY(360deg); } }
+@keyframes glow-pulse { 0%, 100% { opacity: .55; } 50% { opacity: 1; } }
+
+/* Headings use the condensed display face. Unlayered on purpose so it wins over Tailwind's tracking-tight etc.
+   Small mono labels that happen to be <h2> opt out with the font-mono class. */
+h1, h2:not(.font-mono), h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+}
+.font-name { font-family: var(--font-name); font-style: italic; font-weight: 900; text-transform: none; letter-spacing: -0.01em; }
+
+@keyframes marquee { to { transform: translateX(-50%); } }
+.marquee-track { display: flex; width: max-content; animation: marquee 38s linear infinite; }
+@keyframes marquee-rev { from { transform: translateX(-50%); } to { transform: translateX(0); } }
+.marquee-rev { animation-name: marquee-rev; }
+.marquee:hover .marquee-track { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) { .marquee-track { animation: none; } }
+
+@keyframes pop-in { from { scale: 0; opacity: 0; } to { scale: 1; opacity: 1; } }

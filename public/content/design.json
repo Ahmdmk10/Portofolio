@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "items": [
+    { "id": "d1", "status": "published", "title": "Ketupat Wave", "year": "2026", "kind": "Generative", "tags": ["Canvas", "Math"], "hue": 150, "ratio": "4/5", "cover": null },
+    { "id": "d2", "status": "published", "title": "Obsidian ID Badge", "year": "2026", "kind": "UI", "tags": ["Physics", "Figma"], "hue": 280, "ratio": "1/1", "cover": null },
+    { "id": "d3", "status": "published", "title": "Cyber Terminal", "year": "2026", "kind": "Interface", "tags": ["Mono", "Dark"], "hue": 190, "ratio": "5/4", "cover": null },
+    { "id": "d4", "status": "published", "title": "Matrix Access", "year": "2026", "kind": "Poster", "tags": ["Poster", "Security"], "hue": 40, "ratio": "4/5", "cover": null },
+    { "id": "d5", "status": "published", "title": "USU Freshman", "year": "2026", "kind": "Brand", "tags": ["Logo", "Sticker"], "hue": 220, "ratio": "1/1", "cover": null },
+    { "id": "d6", "status": "published", "title": "CTF Banner", "year": "2026", "kind": "Banner", "tags": ["Banner", "CTF"], "hue": 120, "ratio": "5/4", "cover": null }
+  ]
+}

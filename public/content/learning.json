@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "items": [
+    { "id": "l1", "status": "published", "topic": "C++ & OOP", "note": "Class, inheritance, file I/O", "stage": "done", "level": 70 },
+    { "id": "l2", "status": "published", "topic": "Pascal", "note": "Struktur data dasar, simulator matriks", "stage": "done", "level": 75 },
+    { "id": "l3", "status": "published", "topic": "Linux CLI", "note": "Shell, permission, networking tools", "stage": "now", "level": 55 },
+    { "id": "l4", "status": "published", "topic": "Web Security", "note": "OWASP Top 10, XSS, SQLi, auth", "stage": "now", "level": 40 },
+    { "id": "l5", "status": "published", "topic": "Cryptography", "note": "Classical ciphers, RSA, hashing", "stage": "now", "level": 35 },
+    { "id": "l6", "status": "published", "topic": "React & Tailwind", "note": "Component, hooks, animation", "stage": "now", "level": 60 },
+    { "id": "l7", "status": "published", "topic": "Network Fundamentals", "note": "TCP/IP, DNS, HTTP, Wireshark", "stage": "next", "level": 10 },
+    { "id": "l8", "status": "published", "topic": "Reverse Engineering", "note": "Assembly dasar, Ghidra", "stage": "next", "level": 0 },
+    { "id": "l9", "status": "published", "topic": "Data Structures & Algorithms", "note": "Graph, DP, complexity", "stage": "next", "level": 15 }
+  ]
+}
