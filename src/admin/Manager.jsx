@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useState } from 'react'
-import { ArrowDown, ArrowUp, Pencil, Plus, Trash2 } from 'lucide-react'
+import { ArrowDown, ArrowUp, GitBranch, Pencil, Plus, Trash2 } from 'lucide-react'
 import { deleteImage, readCollection, updateCollection } from './github.js'
 import { COLLECTIONS } from './config.js'
 import { Field } from './Fields.jsx'
+import ImportRepo from './ImportRepo.jsx'
 import { safeUrl } from '../content.js'
 
 const slugify = (s) => s.toLowerCase().normalize('NFKD').replace(/[^\w\s-]/g, '').trim().replace(/\s+/g, '-').slice(0, 40) || 'item'
@@ -55,6 +56,7 @@ export default function Manager({ name }) {
   const cfg = COLLECTIONS[name]
   const [rows, setRows] = useState(null)
   const [edit, setEdit] = useState(null)
+  const [picking, setPicking] = useState(false)
   const [msg, setMsg] = useState('')
 
   const load = useCallback(async () => {
@@ -87,7 +89,10 @@ export default function Manager({ name }) {
     <div>
       <div className="mb-4 flex items-center justify-between">
         <p className="font-mono text-xs text-white/45">{rows ? `${rows.length} item` : 'memuat…'}</p>
-        <button onClick={() => setEdit({ ...cfg.blank })} className="flex items-center gap-1.5 rounded-full bg-emerald-400 px-4 py-2 text-sm font-bold text-black"><Plus size={16} />Baru</button>
+        <div className="flex items-center gap-2">
+          {cfg.importable && <button onClick={() => setPicking(true)} className="flex items-center gap-1.5 rounded-full border border-white/20 px-4 py-2 text-sm hover:bg-white/10"><GitBranch size={15} />Impor dari GitHub</button>}
+          <button onClick={() => setEdit({ ...cfg.blank })} className="flex items-center gap-1.5 rounded-full bg-emerald-400 px-4 py-2 text-sm font-bold text-black"><Plus size={16} />Baru</button>
+        </div>
       </div>
       {msg && <p className="mb-3 rounded-[5px] border border-red-400/30 bg-red-400/10 p-2 text-sm text-red-300">{msg}</p>}
       <div className="border-t border-white/10">
@@ -109,6 +114,7 @@ export default function Manager({ name }) {
         ))}
         {rows?.length === 0 && <p className="py-10 text-center text-sm text-white/40">Belum ada item.</p>}
       </div>
+      {picking && <ImportRepo existingLinks={(rows || []).map((r) => r.link)} onClose={() => setPicking(false)} onPick={(proj) => { setPicking(false); setEdit({ ...cfg.blank, ...proj }) }} />}
       {edit && <Editor cfg={cfg} name={name} row={edit} onClose={() => setEdit(null)} onSaved={() => { setEdit(null); setMsg(''); load() }} />}
     </div>
   )

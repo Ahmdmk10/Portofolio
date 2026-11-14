@@ -3,7 +3,7 @@ const STATUS = { name: 'status', label: 'Status', type: 'select', options: ['dra
 
 export const COLLECTIONS = {
   coding: {
-    label: 'Coding', titleKey: 'title',
+    label: 'Coding', titleKey: 'title', importable: true,
     blank: { title: '', year: String(new Date().getFullYear()), kind: '', tags: [], desc: '', link: '', cover: null, status: 'draft' },
     fields: [
       { name: 'title', label: 'Judul', type: 'text', required: true },

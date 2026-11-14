@@ -182,9 +182,6 @@ export default function Hero() {
 
   return (
     <section id="home" className="relative z-10 max-w-7xl mx-auto px-5 sm:px-8 pt-32 pb-16 lg:pb-0 min-h-screen lg:flex lg:items-center">
-      {/* BOTTOM LAYER: portrait on a 3D plinth. Text, terminal and ID card pass over it. */}
-      <div className="pointer-events-none absolute inset-x-0 top-20 bottom-0 z-0 flex items-center justify-center opacity-40 lg:opacity-100"><Stage /></div>
-
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 w-full items-center">
         {/* LEFT */}
         <div ref={leftRef} className="relative z-20 lg:col-span-5 lg:col-start-1 lg:row-start-1">
@@ -210,6 +207,10 @@ export default function Hero() {
           </Rise>
           <Rise i={4}><Terminal /></Rise>
         </div>
+
+        {/* PORTRAIT on a 3D plinth. On lg it is the bottom layer behind the text, terminal and ID card. Below lg it used to sit
+            dimmed (40% opacity) behind the terminal, hiding the face; now it is a normal, full-opacity row between the text and the badge. */}
+        <div className="pointer-events-none relative z-0 flex items-center justify-center lg:absolute lg:inset-x-0 lg:top-20 lg:bottom-0"><Stage /></div>
 
         {/* RIGHT: physics badge. On lg the area stretches to the very top so the lanyard hangs from the screen edge. */}
         <div ref={areaRef} className="lg:col-span-4 relative z-20 h-[700px] lg:absolute lg:top-0 lg:right-0 lg:w-[30%] lg:h-[720px] w-full">

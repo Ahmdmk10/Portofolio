@@ -12,7 +12,7 @@ const cache = {}
 async function fromGitHub(name) {
   if (!RAW) return null
   try {
-    const r = await fetch(`${RAW}/${name}.json`)
+    const r = await fetch(`${RAW}/${name}.json?v=${Math.floor(Date.now() / 60000)}`) // new URL each minute: bypasses GitHub's 5-min CDN cache
     if (!r.ok) return null
     const j = await r.json()
     return Array.isArray(j?.items) ? j.items : null

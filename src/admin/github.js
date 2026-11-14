@@ -71,3 +71,38 @@ export async function deleteImage(src) {
     await gh(`/contents/public/content/${src}`, { method: 'DELETE', body: JSON.stringify({ message: `admin: remove ${src}`, branch: BRANCH, sha: j.sha }) })
   } catch { /* already gone */ }
 }
+
+// ---- import from GitHub: public repos of the account that owns this portfolio repo -------------------------------
+// Uses the public, unauthenticated endpoint on purpose: a fine-grained token limited to one repo cannot list the
+// others, and public repos need no token. (60 requests/hour per IP is plenty for an admin page.)
+const OWNER = REPO.split('/')[0]
+
+export async function listRepos() {
+  const all = []
+  for (let page = 1; page <= 3; page++) {
+    const r = await fetch(`https://api.github.com/users/${OWNER}/repos?sort=pushed&direction=desc&per_page=100&page=${page}`, { headers: { Accept: 'application/vnd.github+json' } })
+    if (!r.ok) throw new Error(r.status === 403 ? 'Batas permintaan GitHub tercapai, coba lagi nanti.' : `Gagal memuat repo (${r.status})`)
+    const batch = await r.json()
+    all.push(...batch)
+    if (batch.length < 100) break
+  }
+  const self = REPO.toLowerCase()
+  return all
+    .filter((r) => !r.private && !r.archived && r.full_name.toLowerCase() !== self)
+    .map((r) => ({
+      name: r.name, fullName: r.full_name, description: r.description || '', url: r.html_url, homepage: r.homepage || '',
+      language: r.language || '', topics: r.topics || [], year: (r.created_at || '').slice(0, 4), pushed: r.pushed_at, stars: r.stargazers_count || 0, fork: !!r.fork,
+    }))
+}
+
+const humanize = (n) => n.replace(/[-_.]+/g, ' ').replace(/\s+/g, ' ').trim().replace(/\b[a-z]/g, (c) => c.toUpperCase())
+
+// A repo -> a draft "coding" item: Judul, Tahun, Jenis, Tag, Deskripsi and Link are filled in, the cover is GitHub's own
+// generated preview image of the repo. Everything stays editable in the form before saving.
+export function repoToProject(r) {
+  return {
+    title: humanize(r.name), year: r.year || String(new Date().getFullYear()), kind: r.language || '',
+    tags: [...new Set([r.language, ...r.topics].filter(Boolean))].slice(0, 8), desc: r.description,
+    link: r.url, cover: { type: 'url', src: `https://opengraph.githubassets.com/1/${r.fullName}` }, status: 'draft',
+  }
+}
