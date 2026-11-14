@@ -20,13 +20,8 @@ function Avatar() {
   )
 }
 
-// public/me.png (transparent cutout) if present, otherwise the placeholder avatar.
-function Photo() {
-  const [ok, setOk] = useState(true)
-  return ok
-    ? <img src="/me.png" alt="Ahmad Mumtazul Kautsar" draggable={false} className="h-full w-full object-cover object-top" onError={() => setOk(false)} />
-    : <Avatar />
-}
+// Nametag photo is removed for now: always the placeholder avatar.
+const Photo = () => <Avatar />
 
 const Orbs = () => (
   <>

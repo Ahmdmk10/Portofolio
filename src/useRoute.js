@@ -10,7 +10,7 @@ const read = () => {
 export default function useRoute() {
   const [route, setRoute] = useState(read)
   useEffect(() => {
-    const on = () => { setRoute(read()); window.scrollTo({ top: 0 }) }
+    const on = () => setRoute(read()) // scrolling to the top is done by App, once the loading cover hides the swap
     window.addEventListener('hashchange', on)
     return () => window.removeEventListener('hashchange', on)
   }, [])

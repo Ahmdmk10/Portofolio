@@ -1,4 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
+import { motion, useMotionTemplate, useMotionValue, useSpring, useTransform } from 'framer-motion'
+
+const ME = `${import.meta.env.BASE_URL}me.png` // BASE_URL keeps this working under /Portofolio/ on GitHub Pages
+const ME_SIDE = `${import.meta.env.BASE_URL}me-side.png` // same silhouette filled with dark emerald: the extruded sides
+// The bust outline (curved shoulders and base instead of the photo's straight edges) is baked into me.png.
+// Pseudo-3D: the cutout is extruded into LAYERS thin copies of its own silhouette stacked in depth, so the figure has
+// real thickness that shows when it turns toward the cursor. The shape follows the person, not a rectangle.
+const LAYERS = 20, DZ = 2.2 // depth = LAYERS * DZ px
 
 // ---- isometric slab (the 3D "divider" base) ---------------------------------
 const slab = (cx, cy, w, h, t, k) => {
@@ -63,14 +71,60 @@ function Tile({ size, color, rot, style, dur = 6, delay = 0, depth = 16, sx = 0,
   )
 }
 
-// ---- portrait: put a transparent PNG at public/me.png to replace the placeholder ----
+const useSpringTransform = (v, k) => useTransform(v, (n) => n * k) // scale a -1..1 motion value
+
+// ---- portrait: public/me.png (transparent cutout). It turns toward the cursor, and a light follows the cursor
+// across the person only (the light layers are masked with the same PNG).
+const SPR = { stiffness: 110, damping: 18, mass: 0.6 }
 function Portrait() {
   const [custom, setCustom] = useState(true)
+  const box = useRef(null)
+  // dx/dy: cursor offset from the portrait centre, -1..1 over the whole window (drives the head turn)
+  const dx = useMotionValue(0), dy = useMotionValue(0)
+  // lx/ly: cursor position inside the portrait box in % (drives the light), may go a bit outside 0..100
+  const lx = useMotionValue(50), ly = useMotionValue(35)
+  const sdx = useSpring(dx, SPR), sdy = useSpring(dy, SPR), slx = useSpring(lx, { stiffness: 220, damping: 24 }), sly = useSpring(ly, { stiffness: 220, damping: 24 })
+  const glow = useMotionTemplate`radial-gradient(circle 280px at ${slx}% ${sly}%, rgba(255,255,255,.95) 0%, rgba(255,255,255,.35) 30%, transparent 62%)`
+  const tint = useMotionTemplate`radial-gradient(circle 340px at ${slx}% ${sly}%, rgba(52,245,164,.55) 0%, rgba(52,245,164,.12) 45%, transparent 70%)`
+
+  useEffect(() => {
+    const move = (e) => {
+      const r = box.current?.getBoundingClientRect()
+      if (!r) return
+      const cx = r.left + r.width / 2, cy = r.top + r.height * 0.35 // look-at point is around the face
+      dx.set(Math.max(-1, Math.min(1, (e.clientX - cx) / (window.innerWidth / 2))))
+      dy.set(Math.max(-1, Math.min(1, (e.clientY - cy) / (window.innerHeight / 2))))
+      lx.set(Math.max(-30, Math.min(130, ((e.clientX - r.left) / r.width) * 100)))
+      ly.set(Math.max(-30, Math.min(130, ((e.clientY - r.top) / r.height) * 100)))
+    }
+    window.addEventListener('pointermove', move)
+    return () => window.removeEventListener('pointermove', move)
+  }, [dx, dy, lx, ly])
+
+  const maskLayer = { maskImage: `url(${ME})`, WebkitMaskImage: `url(${ME})`, maskSize: 'contain', WebkitMaskSize: 'contain', maskPosition: 'center bottom', WebkitMaskPosition: 'center bottom', maskRepeat: 'no-repeat', WebkitMaskRepeat: 'no-repeat' }
+  const rotateY = useSpringTransform(sdx, 26), rotateX = useSpringTransform(sdy, -12)
+  const x = useSpringTransform(sdx, 12), y = useSpringTransform(sdy, 7)
+
   return (
     <div className="absolute bottom-[110px] lg:bottom-[175px] left-1/2 h-[440px] w-[330px] lg:h-[600px] lg:w-[440px] -translate-x-1/2"
-      style={{ maskImage: 'linear-gradient(to bottom, #000 82%, transparent 100%)', WebkitMaskImage: 'linear-gradient(to bottom, #000 82%, transparent 100%)' }}>
+      style={{ perspective: 1000 }}>
       {custom ? (
-        <img src="/me.png" alt="Ahmad Mumtazul Kautsar" className="h-full w-full object-contain object-bottom" onError={() => setCustom(false)} />
+        <motion.div ref={box} data-star className="relative h-full w-full will-change-transform"
+          style={{ rotateY, rotateX, x, y, transformStyle: 'preserve-3d', transformOrigin: '50% 55% -22px' }}>
+          {/* neon back plate + the extruded body: silhouette copies receding in depth, slightly shrinking (rounded edge) */}
+          <img src={ME_SIDE} alt="" aria-hidden draggable={false} className="pointer-events-none absolute inset-0 h-full w-full object-contain object-bottom"
+            style={{ transform: `translateZ(${-LAYERS * DZ}px)`, filter: 'drop-shadow(0 0 22px rgba(52,245,164,.85)) drop-shadow(0 0 54px rgba(52,245,164,.35))' }} />
+          {Array.from({ length: LAYERS }, (_, k) => LAYERS - k).map((i) => (
+            <img key={i} src={ME_SIDE} alt="" aria-hidden draggable={false} className="pointer-events-none absolute inset-0 h-full w-full object-contain object-bottom"
+              style={{ transform: `translateZ(${-i * DZ}px) scale(${1 - i * 0.0009})`, transformOrigin: '50% 60%' }} />
+          ))}
+          {/* front face: photo + cursor light, flattened into one plane so the blend modes stay inside it */}
+          <div className="absolute inset-0" style={{ isolation: 'isolate', transform: 'translateZ(1px)' }}>
+            <img src={ME} alt="Ahmad Mumtazul Kautsar" draggable={false} className="relative h-full w-full object-contain object-bottom" onError={() => setCustom(false)} />
+            <motion.div className="pointer-events-none absolute inset-0" style={{ ...maskLayer, background: tint, mixBlendMode: 'color-dodge', opacity: 0.55 }} />
+            <motion.div className="pointer-events-none absolute inset-0" style={{ ...maskLayer, background: glow, mixBlendMode: 'soft-light' }} />
+          </div>
+        </motion.div>
       ) : (
         <svg viewBox="0 0 200 270" className="h-full w-full">
           <defs>
